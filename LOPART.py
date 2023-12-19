@@ -36,8 +36,8 @@ def gen_data():
     # Labels
     neg_start = [2, 7]      # there is no changepoint at point 2, 7, and 8
     neg_end   = [3, 9]      #
-    pos_start = [4, -1]     # there can be exactly one changepoint at 4 or 5
-    pos_end   = [6, -1]     #
+    pos_start = [4]         # there can be exactly one changepoint at 4 or 5
+    pos_end   = [6]         #
 
     return sequence, neg_start, neg_end, pos_start, pos_end
 
@@ -84,20 +84,27 @@ def get_T(sequence_length, neg_start, neg_end, pos_start, pos_end):
     T.append([])
 
     for i in range(1, sequence_length+1):
-        for j in range(len(neg_start)):
-            if ((neg_start[j] < i and i <= neg_end[j]) or (pos_start[j] < i and i < pos_end[j])):   # i inside regions
+        tag = 'otherwise'
+        for s, e in zip(neg_start, neg_end):
+            if(s < i <= e):
+                tag = 'inside region'
+        
+        for s, e in zip(pos_start, pos_end):
+            if(s < i < e):
+                tag = 'inside region'
+            elif(i == e):
+                tag = 'out positive'
+                s_pos = s
+                e_pos = e
+        
+        match tag:
+            case "inside region":
                 T.append(T[i-1])
-                break
-            elif (i == pos_end[j]):                                                                 # i is just outside positive region
-                region = []
-                for k in range(pos_start[j], pos_end[j]):
-                    region.append(k)
-                T.append(region)
-                break
-
-        if (len(T) == i):                                                                           # otherwise
-            T.append(T[i-1]+[i-1])
-
+            case "out positive":
+                T.append(list(range(s_pos, e_pos)))
+            case "otherwise":
+                T.append(T[i-1]+[i-1])
+    
     return T
 
 
@@ -136,8 +143,29 @@ def lopart(lda, T, sequence, y, z):
     return set_of_chpnt
 
 
+# counting errors
+def count_items_between(lst, a, b):
+    count = sum(1 for item in lst if a <= item < b)
+    return count
+
+def error_count(chpnt, neg_start, neg_end, pos_start, pos_end):
+    fp_count, fn_count = 0, 0                           # initizlize false positive and false negative
+    
+    for s, e in zip(neg_start, neg_end):
+        if(count_items_between(chpnt, s, e) > 0):       # number of change is not 0 in negative labels
+            fp_count += 1
+    
+    for s, e in zip(pos_start, pos_end):
+        if(count_items_between(chpnt, s, e) > 1):       # number of change is greater than 1 in positive labels
+            fp_count += 1
+        elif(count_items_between(chpnt, s, e) == 0):    # number of change is 0 in positive labels
+            fn_count += 1
+    
+    return fp_count, fn_count
+
+
 # function to plot sequence with labels and changepoints wrt lambda (if provided)
-def plot_sequence(sequence, neg_start, neg_end, pos_start, pos_end, chpnt=None, mean=None, lda=None):
+def plot_sequence(sequence, neg_start, neg_end, pos_start, pos_end, algorithm='LOPART', chpnt=None, mean=None, lda=None):
     sequence = sequence[1:]
 
     # Prepare data for plotnine
@@ -178,7 +206,7 @@ def plot_sequence(sequence, neg_start, neg_end, pos_start, pos_end, chpnt=None, 
 
     # Set the figure title
     if lda is not None:
-        plot += ggtitle('lambda = ' + str(lda))
+        plot += ggtitle(algorithm + ' -- lambda = ' + str(lda) + ' -- errors = ' + str(sum(error_count(chpnt, neg_start, neg_end, pos_start, pos_end))))
 
     # Center the title horizontally
         plot += theme(plot_title=element_text(hjust=0.5))
@@ -201,13 +229,22 @@ if __name__ == "__main__":
     y, z = get_cumsum(sequence)
 
     # get T
-    T = get_T(sequence_length, neg_start, neg_end, pos_start, pos_end)
+    T_lopart = get_T(sequence_length, neg_start, neg_end, pos_start, pos_end)
+    T_opart  = get_T(sequence_length, [], [], [], [])
 
     # save images of solution with respect to different lambda into one pdf file
     plots = [plot_sequence(sequence, neg_start, neg_end, pos_start, pos_end)]
-    for lda in [0, 1, 10]:
-        chpnt = lopart(lda, T, sequence, y, z)
-        mean  = get_mean(y, chpnt)
-        plots.append(plot_sequence(sequence, neg_start, neg_end, pos_start, pos_end, chpnt, mean, lda))
+    for T in [T_opart, T_lopart]:
+        for lda in [0, 1, 10, 100]:
+            chpnt = lopart(lda, T, sequence, y, z)
+            mean  = get_mean(y, chpnt)
+            if(T == T_opart):
+                algorithm = 'OPART'
+            else:
+                algorithm = 'LOPART'
+            
+            plots.append(plot_sequence(sequence, neg_start, neg_end, pos_start, pos_end, algorithm, chpnt, mean, lda))
+
+        
     
     save_as_pdf_pages(plots, filename='output.pdf')
