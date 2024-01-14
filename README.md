@@ -45,4 +45,4 @@ predicts this constant $\lambda$ for each test data sequence.
 - Then each sequence $i$, we have $\lambda = 10^{l_i} \rightarrow 10^{h_i}$ which minimize the train error labels.
 - consider $\log(\lambda_i) = \log(\log(N_i))*w + b = x_iw + b$
 - Because we want $\log(\lambda_i)$ is between $l_i$ and $h_i$, so we use the hinge square loss (margin = 1) which is similar to mean square error (but instead of having one minimal point, hinge square function has a range of minimal points) for learning $w$ and $b$:
-$$L(\lambda_i, l_i, h_i) = \big(ReLU(x_iw+b - h_i + 1) + ReLU(l_i - x_iw + b + 1)\big)^2$$
+$$L(\lambda_i, l_i, h_i) = \big(ReLU(x_iw+b - h_i + 1) + ReLU(l_i - x_iw - b + 1)\big)^2$$
