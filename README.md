@@ -33,7 +33,7 @@ Similar to OPART, there is only one difference: inside the for loop, instead of 
 To choose the best value of $\lambda$ (apply for either OPART or LOPART), we use the train set to learn the best $\lambda$ then apply that $\lambda$ to the test set. The train set and the test set have the same 413 sequences but different labels for each sequence.
 
 ### Bayesian Information Criterion (BIC)
-Set $\lambda = \log(N)$ where $N$ is the length of the sequence. For example, $N = 100$, then $\lambda = 2$.
+Set $\lambda = \log(N)$ where $N$ is the length of the sequence. For example, $N = 100$, then $\lambda \approx 4.6$.
 
 ### Constant
 Try $\lambda = 10^k$ where $k \in \{-5, -4.5, \dots, 5\}$.
