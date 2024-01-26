@@ -100,7 +100,7 @@ sequenceID,fold_1_total_labels,fold_2_total_labels,fold_1_errs,fold_2_errs
 98,2,2,2,1
 99,2,2,0,2
 100,1,1,0,1
-101,1,1,0,1
+101,1,1,1,1
 102,1,1,0,0
 103,2,1,0,0
 104,2,1,0,0
@@ -235,7 +235,7 @@ sequenceID,fold_1_total_labels,fold_2_total_labels,fold_1_errs,fold_2_errs
 233,2,1,0,1
 234,4,3,1,1
 235,1,1,0,0
-236,3,2,2,1
+236,3,2,3,1
 237,1,1,1,1
 238,1,1,1,1
 239,2,1,1,0
