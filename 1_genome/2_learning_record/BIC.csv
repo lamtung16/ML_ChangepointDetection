@@ -1,4 +1,4 @@
-sequenceID,log_lambda,fold_1_total_labels,fold_2_total_labels,fold_1_fp_errs,fold_1_fn_errs,fold_1_tp,fold_1_tn,fold_2_fp_errs,fold_2_fn_errs,fold_2_tp,fold_2_tn
+sequenceID,log10_lambda,fold_1_total_labels,fold_2_total_labels,fold_1_fp_errs,fold_1_fn_errs,fold_1_tp,fold_1_tn,fold_2_fp_errs,fold_2_fn_errs,fold_2_tp,fold_2_tn
 1.1,1.0,2,1,0,1,0,1,0,1,0,0
 1.11,0.5,1,1,0,0,0,1,0,0,1,0
 1.15,0.5,1,1,0,1,0,0,0,0,0,1
