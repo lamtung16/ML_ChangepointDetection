@@ -46,3 +46,24 @@ predicts this constant $\lambda$ for each test data sequence.
 - consider $\log(\lambda_i) = \log(\log(N_i))*w + b = x_iw + b$
 - Because we want $\log(\lambda_i)$ is between $l_i$ and $h_i$, so we use the hinge square loss (margin = 1) which is similar to mean square error (but instead of having one minimal point, hinge square function has a range of minimal points) for learning $w$ and $b$:
 $$L(\lambda_i, l_i, h_i) = \big(ReLU(x_iw+b - h_i + 1) + ReLU(l_i - x_iw - b + 1)\big)^2$$
+
+# Changepoint detection penalty learning
+
+## Folders:
+- **`acc_rate`:** Contains CSV files detailing the accuracy rates for each implemented method.
+- **`figures`:** Holds figures generated.
+- **`training_data`:** Consists of data for training pertaining to error counts for each lambda, sequence features, and target intervals.
+
+## Python Files:
+- **`utility_functions.py`:** Collection of utility functions.
+- **`BIC.py`:** Implements the computation of log_lambda using the Bayesian Information Criterion (BIC) approach.
+- **`MLP.py`:** Implements learning log_lambda from a set of sequence features using a Multi-Layer Perceptron (MLP) approach.
+- **`main.py`:** Serves as the main entry point, responsible for generating accuracy rate files in the `acc_rate` folder.
+
+## Generating Figures from Scratch:
+- Accuracy Rate Comparison figure:
+  - Run `main_MLP.py` to generate a CSV file containing accuracy rates for each method. Add new methods if necessary (running `main_BIC.py` and `main_L1reg.py`).
+  - Execute `figure_acc_compare.ipynb`, `figure_feature_engineer_compare.ipynb`, `figure_mlp_compare.ipynb`, `figure_features_target.ipynb`. The resulting figure will be generated in the `figures` folder.
+    ![Plot](figures/acc_compare.jpg)
+    ![Plot](figures/features_targets_detailed.jpg)
+    ![Plot](figures/mlp.jpg)
