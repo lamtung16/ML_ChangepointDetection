@@ -14,7 +14,7 @@ def get_err(evaluation_df, seqID, llda):
     eval_df = evaluation_df[evaluation_df['sequenceID'] == seqID]
     
     # get right row
-    position = np.logical_and(eval_df['min.log.lambda'] < llda, llda < eval_df['max.log.lambda'])
+    position = np.logical_and(eval_df['min.log.lambda'] <= llda, llda < eval_df['max.log.lambda'])
     row = eval_df[position]
 
     # get total labels and total errors
