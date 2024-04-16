@@ -68,3 +68,4 @@ $$L(\lambda_i, l_i, h_i) = \big(ReLU(x_iw+b - h_i + 1) + ReLU(l_i - x_iw - b + 1
     ![Plot](figures/features_targets_detailed.jpg)
     ![Plot](figures/features_targets_epigenomic.jpg)
     ![Plot](figures/features_targets_systematic.jpg)
+    ![Plot](figures/mlp.jpg)
