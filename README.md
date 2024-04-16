@@ -66,4 +66,5 @@ $$L(\lambda_i, l_i, h_i) = \big(ReLU(x_iw+b - h_i + 1) + ReLU(l_i - x_iw - b + 1
   - Execute `figure_acc_compare.ipynb`, `figure_feature_engineer_compare.ipynb`, `figure_mlp_compare.ipynb`, `figure_features_target.ipynb`. The resulting figure will be generated in the `figures` folder.
     ![Plot](figures/acc_compare.jpg)
     ![Plot](figures/features_targets_detailed.jpg)
-    ![Plot](figures/mlp.jpg)
+    ![Plot](figures/features_targets_epigenomic.jpg)
+    ![Plot](figures/features_targets_systematic.jpg)
