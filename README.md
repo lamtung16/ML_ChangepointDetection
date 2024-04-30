@@ -1,14 +1,4 @@
 # Changepoint detection
-## Problem
-- What we have:
-    - The number of sequence: 413
-    - The number of data points per sequence: ranges from 39 to 43628 
-    - The number of labels (regions) per sequence: ranges from 2 to 12
-        - Negative regions $[a, b]$: neither of $a, a+1, \dots, b-1$ can be a changepoint.
-        - Positive regions $[a, b]$: either $a, a+1, \dots, b-1$ can be a changepoint.
-- What we have to find:
-    - For each sequence $x = [x_1, x_2, \dots, x_N]$, find the set of changepoint $f \subset \{1, 2, \dots, N-1\}$ to minimize the number of incorect predicted labels.
-
 ## Algorithm
 ### Optimal Partitioning (OPART)
 To implement the algorithm, we need to know the definition of this loss function:
@@ -30,42 +20,55 @@ Pseudo code (last changepoint algorithm):
 Similar to OPART, there is only one difference: inside the for loop, instead of consider $\tau \in \{0, 1, \dots, t-1\}$, we consider $\tau \in T$ which satisfy the number of changepoints from all of the train labels.
 
 ## Penalty Value Learning
-To choose the best value of $\lambda$ (apply for either OPART or LOPART), we use the train set to learn the best $\lambda$ then apply that $\lambda$ to the test set. The train set and the test set have the same 413 sequences but different labels for each sequence.
+To choose the best value of $\lambda$ (apply for either OPART or LOPART), we use the train set to learn the best $\lambda$ then apply that $\lambda$ to the test set.
 
 ### Bayesian Information Criterion (BIC)
 Set $\lambda = \log(N)$ where $N$ is the length of the sequence. For example, $N = 100$, then $\lambda \approx 4.6$.
 
-### Constant
-Try $\lambda = 10^k$ where $k \in \{-5, -4.5, \dots, 5\}$.
-Then choose a value with minimal train label errors, then
-predicts this constant $\lambda$ for each test data sequence.
-
 ### Linear
-- From the train set, for each sequence, use OPART with 21 different $\lambda$ from the previous part, and for each $\lambda$, we get the total number of train error.
-- Then each sequence $i$, we have $\lambda = 10^{l_i} \rightarrow 10^{h_i}$ which minimize the train error labels.
 - consider $\log(\lambda_i) = \log(\log(N_i))*w + b = x_iw + b$
 - Because we want $\log(\lambda_i)$ is between $l_i$ and $h_i$, so we use the hinge square loss (margin = 1) which is similar to mean square error (but instead of having one minimal point, hinge square function has a range of minimal points) for learning $w$ and $b$:
-$$L(\lambda_i, l_i, h_i) = \big(ReLU(x_iw+b - h_i + 1) + ReLU(l_i - x_iw - b + 1)\big)^2$$
+$$L(\lambda_i, l_i, h_i) = \big(ReLU(x_iw+b - h_i + 1)\big)^2 + \big(ReLU(l_i - x_iw - b + 1)\big)^2$$
+
+### MMIT
+Similar to CART, MMIT using decision tree to predict the value of $\lambda$ using sequences features.
 
 # Changepoint detection penalty learning
 
 ## Folders:
-- **`acc_rate`:** Contains CSV files detailing the accuracy rates for each implemented method.
-- **`figures`:** Holds figures generated.
+- **`0.data_process`:** code to process raw data from epigenomic dataset (do not include the dataset).
+- **`0.lopart_code`:** code to process raw data from detailed and systematic dataset, and OPART/LOPART algorithm.
+- **`1.MMIT`:** R code to run MMIT algorithm.
+- **`acc_rate_csvs`:** Contains CSV files detailing the accuracy rates for each implemented method.
+- **`figures`:** Holds figures generated and code to generate them.
 - **`training_data`:** Consists of data for training pertaining to error counts for each lambda, sequence features, and target intervals.
 
-## Python Files:
+## Python Files and Notebooks:
+- **`BIC.ipynb`:** Implements the computation of log_lambda using the Bayesian Information Criterion (BIC) approach.
+- **`get_table_chosen_mlp.ipynb`:** get table of chosen MLP configuration.
+- **`linear.ipynb`:** Implements learning log_lambda from a set of sequence features using linear approach.
+- **`MLP.ipynb`, `MLP_117.ipynb`:** Implements learning log_lambda from a set of sequence features using a Multi-Layer Perceptron (MLP) approach.
+- **`MLP_cv.ipynb`, `MLP_117_cv.ipynb`:** Cross validation to write a csv file about configuration and validation accuracy.
+- **`MMIT.ipynb`:** get accuracy from predicted log lamda of MMIT.
 - **`utility_functions.py`:** Collection of utility functions.
-- **`BIC.py`:** Implements the computation of log_lambda using the Bayesian Information Criterion (BIC) approach.
-- **`MLP.py`:** Implements learning log_lambda from a set of sequence features using a Multi-Layer Perceptron (MLP) approach.
-- **`main.py`:** Serves as the main entry point, responsible for generating accuracy rate files in the `acc_rate` folder.
 
 ## Generating Figures from Scratch:
-- Accuracy Rate Comparison figure:
-  - Run `main_MLP.py` to generate a CSV file containing accuracy rates for each method. Add new methods if necessary (running `main_BIC.py` and `main_L1reg.py`).
-  - Execute `figure_acc_compare.ipynb`, `figure_feature_engineer_compare.ipynb`, `figure_mlp_compare.ipynb`, `figure_features_target.ipynb`. The resulting figure will be generated in the `figures` folder.
+  - Run `BIC.ipynb`, `linear.ipynb`, `MLP.ipynb`, `MLP_117.ipynb`, `1.MMIT/MMIT.ipynb` for each dataset (set dataset to run in the beginning of notebook file), to generate a CSV file containing accuracy rates for each method.
+  - Execute `figures/0.get_plot_acc.ipynb`, `1.get_plot_mlp.ipynb`, `2.get_plot_features_targets.ipynb`, `figure_features_target.ipynb`. The resulting figure will be generated in the `figures` folder.
     ![Plot](figures/acc_compare.jpg)
     ![Plot](figures/features_targets_detailed.jpg)
     ![Plot](figures/features_targets_epigenomic.jpg)
     ![Plot](figures/features_targets_systematic.jpg)
     ![Plot](figures/mlp.jpg)
+
+## Copyright
+
+Unless otherwise stated, all content in this repository is licensed under the [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/). You are free to:
+
+- Share — copy and redistribute the material in any medium or format
+- Adapt — remix, transform, and build upon the material for any purpose, even commercially.
+
+Under the following terms:
+- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+
+For any questions regarding licensing or the use of this repository, please contact [Tung L Nguyen](mailto:nguyenlamtung10@gmail.com).
