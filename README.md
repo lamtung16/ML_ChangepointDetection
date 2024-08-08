@@ -38,6 +38,7 @@ Similar to CART, MMIT using decision tree to predict the value of $\lambda$ usin
 ## Folders:
 - **`0.data_process`:** code to process raw data from epigenomic dataset (do not include the dataset).
 - **`0.lopart_code`:** code to process raw data from detailed and systematic dataset, and OPART/LOPART algorithm.
+- **`1.linear`:** R code to run linear_unreg and linear_L1reg algorithms.
 - **`1.MMIT`:** R code to run MMIT algorithm.
 - **`acc_rate_csvs`:** Contains CSV files detailing the accuracy rates for each implemented method.
 - **`figures`:** Holds figures generated and code to generate them.
@@ -53,7 +54,8 @@ Similar to CART, MMIT using decision tree to predict the value of $\lambda$ usin
 - **`utility_functions.py`:** Collection of utility functions.
 
 ## Generating Figures from Scratch:
-  - Run `BIC.ipynb`, `linear.ipynb`, `MLP.ipynb`, `MLP_117.ipynb`, `1.MMIT/MMIT.ipynb` for each dataset (set dataset to run in the beginning of notebook file), to generate a CSV file containing accuracy rates for each method.
+  - Run `BIC.ipynb`, `linear.ipynb`, `MLP.ipynb`, `MLP_117.ipynb`, `1.MMIT/MMIT.ipynb`, `1.linear/linear_L1reg/linear_l1reg.ipynb` for each dataset (set dataset to run in the beginning of notebook file), to generate a CSV file containing accuracy rates for each method.
+  - Run `MMIT.ipynb` and `1.linear/get_acc.ipynb` to update accuracies from linear_l1 and MMIT.
   - Execute `figures/0.get_plot_acc.ipynb`, `1.get_plot_mlp.ipynb`, `2.get_plot_features_targets.ipynb`, `figure_features_target.ipynb`. The resulting figure will be generated in the `figures` folder.
     ![Plot](figures/acc_compare.jpg)
     ![Plot](figures/features_targets_detailed.jpg)
