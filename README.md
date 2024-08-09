@@ -22,6 +22,10 @@ Similar to OPART, there is only one difference: inside the for loop, instead of 
 ## Penalty Value Learning
 To choose the best value of $\lambda$ (apply for either OPART or LOPART), we use the train set to learn the best $\lambda$ then apply that $\lambda$ to the test set.
 
+![Plot](paper_figures/lambdachanging.jpg)
+![Plot](paper_figures/loss_function.jpg)
+![Plot](paper_figures/interval_regression.jpg)
+
 ### Bayesian Information Criterion (BIC)
 Set $\lambda = \log(N)$ where $N$ is the length of the sequence. For example, $N = 100$, then $\lambda \approx 4.6$.
 
@@ -34,6 +38,7 @@ $$L(\lambda_i, l_i, h_i) = \big(ReLU(x_iw+b - h_i + 1)\big)^2 + \big(ReLU(l_i - 
 Similar to CART, MMIT using decision tree to predict the value of $\lambda$ using sequences features.
 
 # Changepoint detection penalty learning
+![Plot](paper_figures/model_diagram.jpg)
 
 ## Folders:
 - **`0.data_process`:** code to process raw data from epigenomic dataset (do not include the dataset).
@@ -42,6 +47,7 @@ Similar to CART, MMIT using decision tree to predict the value of $\lambda$ usin
 - **`1.MMIT`:** R code to run MMIT algorithm.
 - **`acc_rate_csvs`:** Contains CSV files detailing the accuracy rates for each implemented method.
 - **`figures`:** Holds figures generated and code to generate them.
+- **`paper_figures`:** Holds other figures used for the paper.
 - **`training_data`:** Consists of data for training pertaining to error counts for each lambda, sequence features, and target intervals.
 
 ## Python Files and Notebooks:
@@ -57,6 +63,8 @@ Similar to CART, MMIT using decision tree to predict the value of $\lambda$ usin
   - Run `BIC.ipynb`, `linear.ipynb`, `MLP.ipynb`, `MLP_117.ipynb`, `1.MMIT/MMIT.ipynb`, `1.linear/linear_L1reg/linear_l1reg.ipynb` for each dataset (set dataset to run in the beginning of notebook file), to generate a CSV file containing accuracy rates for each method.
   - Run `MMIT.ipynb` and `1.linear/get_acc.ipynb` to update accuracies from linear_l1 and MMIT.
   - Execute `figures/0.get_plot_acc.ipynb`, `1.get_plot_mlp.ipynb`, `2.get_plot_features_targets.ipynb`, `figure_features_target.ipynb`. The resulting figure will be generated in the `figures` folder.
+  
+    
     ![Plot](figures/acc_compare.jpg)
     ![Plot](figures/features_targets_detailed.jpg)
     ![Plot](figures/features_targets_epigenomic.jpg)
