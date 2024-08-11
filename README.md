@@ -53,6 +53,7 @@ Similar to CART, MMIT using decision tree to predict the value of $\lambda$ usin
 ## Python Files and Notebooks:
 - **`BIC.ipynb`:** Implements the computation of log_lambda using the Bayesian Information Criterion (BIC) approach.
 - **`get_table_chosen_mlp.ipynb`:** get table of chosen MLP configuration.
+- **`get_acc_from_R_predictions.ipynb`:** update acc_rate_csvs from R predictions (linear or mmit).
 - **`linear.ipynb`:** Implements learning log_lambda from a set of sequence features using linear approach.
 - **`MLP.ipynb`, `MLP_117.ipynb`:** Implements learning log_lambda from a set of sequence features using a Multi-Layer Perceptron (MLP) approach.
 - **`MLP_cv.ipynb`, `MLP_117_cv.ipynb`:** Cross validation to write a csv file about configuration and validation accuracy.
@@ -61,7 +62,7 @@ Similar to CART, MMIT using decision tree to predict the value of $\lambda$ usin
 
 ## Generating Figures from Scratch:
   - Run `BIC.ipynb`, `linear.ipynb`, `MLP.ipynb`, `MLP_117.ipynb`, `1.MMIT/MMIT.ipynb`, `1.linear/linear_L1reg/linear_l1reg.ipynb` for each dataset (set dataset to run in the beginning of notebook file), to generate a CSV file containing accuracy rates for each method.
-  - Run `MMIT.ipynb` and `1.linear/get_acc.ipynb` to update accuracies from linear_l1 and MMIT.
+  - Run `MMIT.ipynb` and `get_acc_from_R_predictions.ipynb` to update accuracies from linear_l1 and MMIT.
   - Execute `figures/0.get_plot_acc.ipynb`, `1.get_plot_mlp.ipynb`, `2.get_plot_features_targets.ipynb`, `figure_features_target.ipynb`. The resulting figure will be generated in the `figures` folder.
   
     
