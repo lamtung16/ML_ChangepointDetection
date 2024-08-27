@@ -12,14 +12,17 @@ import torch.nn as nn
 def get_err(evaluation_df, seqID, llda):
     # get sub eval_df of seqID
     eval_df = evaluation_df[evaluation_df['sequenceID'] == seqID]
-    
-    # get right row
-    position = np.logical_and(eval_df['min.log.lambda'] <= llda, llda < eval_df['max.log.lambda'])
-    row = eval_df[position]
 
-    # get total labels and total errors
-    n_labels = row['labels'].item()
-    n_errs = row['errors'].item()
+    n_labels = 0
+    n_errs = 0
+    if(eval_df.shape[0] > 0):
+        # get right row
+        position = np.logical_and(eval_df['min.log.lambda'] <= llda, llda < eval_df['max.log.lambda'])
+        row = eval_df[position]
+
+        # get total labels and total errors
+        n_labels = row['labels'].item()
+        n_errs = row['errors'].item()
 
     return n_labels, n_errs
 
