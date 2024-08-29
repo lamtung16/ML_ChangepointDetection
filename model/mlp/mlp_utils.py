@@ -9,17 +9,15 @@ def mlp_train_and_predict(X_train, X_test, y_train):
     X_test_scaled = scaler.transform(X_test)
 
     # MLP Regressor setup
-    mlp = MLPRegressor(random_state=12345, early_stopping=True, validation_fraction=0.2, n_iter_no_change=200)
+    mlp = MLPRegressor(random_state=12345, early_stopping=True, n_iter_no_change=50)
 
     # Grid search for hyperparameters
     param_grid = {
-        'hidden_layer_sizes': [(4,), (64,), (256,), (4, 4), (64, 64), (256, 256, 256)],
-        'alpha': [0, 0.0001, 0.01],
-        'activation': ['relu', 'tanh'],
-        'max_iter': [100, 1000, 10000, 20000]
+        'hidden_layer_sizes': [(4,), (64,), (128,), (256,), (512,)],
+        'max_iter': [100, 1000, 10000]
     }
     
-    grid = GridSearchCV(estimator=mlp, param_grid=param_grid, cv=2, n_jobs=-1)
+    grid = GridSearchCV(estimator=mlp, param_grid=param_grid, cv=3, n_jobs=-1)
     grid.fit(X_train_scaled, y_train)
 
     # Best model
