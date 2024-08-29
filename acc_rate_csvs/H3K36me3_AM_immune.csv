@@ -15,3 +15,17 @@ mmit.2,2,92.56449165402124
 mmit.4,2,93.6267071320182
 mmit.100,1,92.65785609397943
 mmit.100,2,83.91502276176024
+mlp_hingesquare.4,1,84.28781204111601
+mlp_hingesquare.4,2,91.95751138088012
+mlp_hingesquare_new_features.1,1,90.30837004405286
+mlp_hingesquare_new_features.2,1,92.0704845814978
+mlp_hingesquare_new_features.4,1,92.80469897209986
+mlp_hingesquare_new_features.1,2,91.95751138088012
+mlp_hingesquare_new_features.2,2,92.1092564491654
+mlp_hingesquare_new_features.4,2,92.71623672230652
+mlp_hingesquare.2,1,93.68575624082231
+mlp_hingesquare.2,2,93.32321699544764
+mlp_hingesquare.1,1,93.68575624082231
+mlp_hingesquare.1,2,93.01972685887708
+mlp_hingesquare.100,1,87.95888399412628
+mlp_hingesquare.100,2,91.65402124430956
