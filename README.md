@@ -1,4 +1,6 @@
 # Changepoint detection
+## Publication
+[Deep Learning Approach for Changepoint Detection: Penalty Parameter Optimization](https://arxiv.org/abs/2408.00856)
 ## Algorithm
 ### Optimal Partitioning (OPART)
 To implement the algorithm, we need to know the definition of this loss function:
