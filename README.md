@@ -1,7 +1,7 @@
 # Changepoint detection
 ## Publication
 [Deep Learning Approach for Changepoint Detection: Penalty Parameter Optimization](https://arxiv.org/abs/2408.00856)
-## Algorithm
+## Changepoint Detection Dynamic Algorithms
 ### Optimal Partitioning (OPART)
 To implement the algorithm, we need to know the definition of this loss function:
 $$L(x, t_1, t_2) = \min_{\mu} \sum_{i=t_1}^{t_2} (x_i - \mu)^2 = \sum_{i=t_1}^{t_2}(x_i - \frac{\sum_{j=t_1}^{t_2}x_i}{t_2-t_1+1})^2=\sum_{i=t_1}^{t_2}x_i^2-\frac{(\sum_{i=t_1}^{t_2}x_t)^2}{t_2-t_1+1}$$
