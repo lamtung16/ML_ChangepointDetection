@@ -47,3 +47,9 @@ rf_power_linear.4,1,87.4189364461738
 rf_power_linear.1,2,90.159901599016
 rf_power_linear.2,2,90.03690036900369
 rf_power_linear.4,2,89.17589175891759
+mlp_adapt_hingesquare.1,1,87.93774319066148
+mlp_adapt_hingesquare.2,1,87.67833981841764
+mlp_adapt_hingesquare.4,1,85.86251621271076
+mlp_adapt_hingesquare.1,2,90.6519065190652
+mlp_adapt_hingesquare.2,2,76.75276752767527
+mlp_adapt_hingesquare.4,2,85.48585485854858
