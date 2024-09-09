@@ -47,3 +47,9 @@ linear_L1reg.100,3,95.96491228070175
 linear_L1reg.100,4,96.84210526315788
 linear_L1reg.100,5,97.18804920913884
 linear_L1reg.100,6,96.66080843585236
+linear_chosen_feature.8,1,98.24561403508771
+linear_chosen_feature.8,2,98.59649122807016
+linear_chosen_feature.8,3,98.0701754385965
+linear_chosen_feature.8,4,98.0701754385965
+linear_chosen_feature.8,5,98.41827768014059
+linear_chosen_feature.8,6,97.36379613356766
