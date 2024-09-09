@@ -49,7 +49,13 @@ rf_power_linear.2,2,91.11111111111111
 rf_power_linear.4,2,91.11111111111111
 mlp_adapt_hingesquare.1,1,92.85714285714286
 mlp_adapt_hingesquare.2,1,90.71428571428571
-mlp_adapt_hingesquare.4,1,92.85714285714286
-mlp_adapt_hingesquare.1,2,95.55555555555556
-mlp_adapt_hingesquare.2,2,70.37037037037037
-mlp_adapt_hingesquare.4,2,45.925925925925924
+mlp_adapt_hingesquare.4,1,91.42857142857143
+mlp_adapt_hingesquare.1,2,93.33333333333333
+mlp_adapt_hingesquare.2,2,71.11111111111111
+mlp_adapt_hingesquare.4,2,46.666666666666664
+mlp_power_hingesquare.1,1,94.28571428571428
+mlp_power_hingesquare.2,1,93.57142857142857
+mlp_power_hingesquare.4,1,96.42857142857143
+mlp_power_hingesquare.1,2,94.81481481481482
+mlp_power_hingesquare.2,2,95.55555555555556
+mlp_power_hingesquare.4,2,92.5925925925926
