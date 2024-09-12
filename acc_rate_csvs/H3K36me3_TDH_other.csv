@@ -17,3 +17,9 @@ linear_L1reg.100,1,95.0
 linear_L1reg.100,2,92.0
 mlp.4,1,86.0
 mlp.4,2,93.0
+mlp.1,1,87.0
+mlp.2,1,86.0
+mlp.1,2,95.0
+mlp.2,2,94.0
+AFT_XGBoost.100,1,93.0
+AFT_XGBoost.100,2,84.0
