@@ -89,3 +89,9 @@ mlp_chosen_fewer_features.5,3,98.0701754385965
 mlp_chosen_fewer_features.5,4,98.24561403508771
 mlp_chosen_fewer_features.5,5,98.41827768014059
 mlp_chosen_fewer_features.5,6,97.36379613356766
+linear_piecewise_2_regions.4,1,98.59649122807016
+linear_piecewise_2_regions.4,2,98.94736842105263
+linear_piecewise_2_regions.4,3,97.89473684210527
+linear_piecewise_2_regions.4,4,98.0701754385965
+linear_piecewise_2_regions.4,5,98.76977152899823
+linear_piecewise_2_regions.4,6,97.18804920913884
