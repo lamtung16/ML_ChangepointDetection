@@ -23,5 +23,5 @@ mlp.1,2,95.0
 mlp.2,2,94.0
 AFT_XGboost.100,1,91.0
 AFT_XGboost.100,2,92.0
-linear_piecewise_2_regions.4,1,86.0
-linear_piecewise_2_regions.4,2,88.0
+linear_piecewise_2_regions.4,1,82.0
+linear_piecewise_2_regions.4,2,94.0

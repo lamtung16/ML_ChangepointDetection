@@ -25,9 +25,9 @@ linear_chosen_features.3,1,83.8323353293413
 linear_chosen_features.3,2,79.28692699490662
 mlp_chosen_features.3,1,84.71138845553821
 mlp_chosen_features.3,2,83.67626886145405
-AFT_XGboost.100,1,93.91575663026521
+AFT_XGboost.100,1,93.9157566302652
 AFT_XGboost.100,2,92.72976680384087
-mlp_chosen_fewer_features.6,1,95.47581903276131
+mlp_chosen_fewer_features.6,1,95.47581903276132
 mlp_chosen_fewer_features.6,2,88.61454046639233
-linear_piecewise_2_regions.4,1,95.16380655226209
-linear_piecewise_2_regions.4,2,94.23868312757202
+linear_piecewise_2_regions.4,1,96.8798751950078
+linear_piecewise_2_regions.4,2,91.22085048010973

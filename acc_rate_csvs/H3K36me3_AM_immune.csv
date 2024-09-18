@@ -29,5 +29,5 @@ AFT_XGboost.100,1,92.51101321585902
 AFT_XGboost.100,2,92.71623672230652
 mlp_chosen_fewer_features.4,1,93.3920704845815
 mlp_chosen_fewer_features.4,2,92.8679817905918
-linear_piecewise_2_regions.4,1,92.95154185022027
-linear_piecewise_2_regions.4,2,92.1092564491654
+linear_piecewise_2_regions.4,1,93.83259911894272
+linear_piecewise_2_regions.4,2,94.38543247344461
