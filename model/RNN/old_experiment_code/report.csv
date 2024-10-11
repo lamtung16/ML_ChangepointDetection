@@ -1,0 +1,10 @@
+test_fold,dataset,model,activation,input_size,hidden_size,num_layer,batch_size,best_train_loss,best_val_loss,corresponding_test_loss
+1,detailed,RNN,relu,1,4,2,64,0.447,0.462,0.46
+1,detailed,RNN,tanh,1,4,2,64,0.447,0.462,0.46
+1,detailed,RNN,relu,1,8,2,64,0.447,0.462,0.46
+1,detailed,RNN,tanh,1,8,2,64,0.447,0.462,0.46
+1,detailed,RNN,relu,1,16,2,64,0.447,0.462,0.46
+1,detailed,RNN,tanh,1,16,2,64,0.447,0.462,0.46
+1,detailed,RNN,relu,1,8,1,1,0.382,0.405,0.375
+1,detailed,LSTM,tanh,1,8,2,1,0.199,0.317,0.378
+1,detailed,LSTM,tanh,2,8,2,1,0.231,0.331,0.311
