@@ -113,140 +113,154 @@ if not os.path.exists(report_path):
     pd.DataFrame(columns=report_header).to_csv(report_path, index=False)
 
 # %%
-for num_layers in [2]:
-    for hidden_size in [2, 4, 8, 16]:
-        for test_fold in np.unique(folds_df['fold']):
-            # Record start time
-            fold_start_time = time.time()
+# Configs
+configurations = {
+    f'num_layers_{num_layers}_hidden_size_{hidden_size}_test_fold_{test_fold}': {
+        'num_layers': num_layers,
+        'hidden_size': hidden_size,
+        'test_fold': test_fold
+    }
+    for num_layers in [1, 2]
+    for hidden_size in [2, 4, 8, 16]
+    for test_fold in range(1, 7)
+}
+config_list = list(configurations.values())
 
-            # Split data into training and test sets based on fold
-            train_ids = folds_df[folds_df['fold'] != test_fold]['sequenceID']
-            test_ids = folds_df[folds_df['fold'] == test_fold]['sequenceID']
-
-            # Prepare train and test sequences as tensors
-            train_seqs = [torch.tensor(seq[1]['signal'].to_numpy(), dtype=torch.float32) for seq in seqs if seq[0] in list(train_ids)]
-            test_seqs = [torch.tensor(seq[1]['signal'].to_numpy(), dtype=torch.float32) for seq in seqs if seq[0] in list(test_ids)]
-
-            # Prepare target values for training and testing
-            target_df_train = target_df[target_df['sequenceID'].isin(train_ids)]
-            y_train = torch.tensor(target_df_train.iloc[:, 1:].to_numpy(), dtype=torch.float32)
-            target_df_test = target_df[target_df['sequenceID'].isin(test_ids)]
-            y_test = torch.tensor(target_df_test.iloc[:, 1:].to_numpy(), dtype=torch.float32)
-
-            # Split training data into subtrain and validation sets
-            train_seqs, val_seqs, y_train, y_val = train_test_split(train_seqs, y_train, test_size=0.2, random_state=42)
-
-            # Initialize the GRU model, loss function, and optimizer
-            model = LSTMModel(input_size, hidden_size, num_layers).to(device)    # Move model to device
-            criterion = SquaredHingeLoss().to(device)                           # Move loss function to device
-            optimizer = torch.optim.Adam(model.parameters())
-
-            # Variables for early stopping
-            best_train_loss = float('inf')    # Best training loss initialized to infinity
-            best_val_loss = float('inf')      # Best validation loss initialized to infinity
-            best_test_loss = float('inf')     # Best test loss corresponding to best validation
-            patience_counter = 0              # Early stopping patience counter
-            best_model_state = None           # Store the best model parameters
-            stop_epoch = 0                    # Epoch when training stops
-
-            # Training loop
-            for epoch in range(max_epochs):
-                # Shuffle training sequences and targets
-                combined = list(zip(train_seqs, y_train))
-                random.shuffle(combined)
-                train_seqs, y_train = zip(*combined)
-
-                total_train_loss = 0
-                nan_flag = False  # Flag to detect NaN loss
-
-                # Train on subtrain data
-                model.train()  # Set model to training mode
-                for i, seq_input in enumerate(train_seqs):
-                    target = y_train[i].unsqueeze(0).to(device)  # Prepare target and move to device
-
-                    optimizer.zero_grad()  # Zero gradients
-
-                    # Forward pass
-                    seq_input = seq_input.unsqueeze(0).unsqueeze(-1).to(device) # Prepare input and move to device
-                    output_seq = model(seq_input)                               # Get model output
-                    loss = criterion(output_seq, target.unsqueeze(-1))          # Compute loss
-
-                    if torch.isnan(loss).any():  # Check for NaN loss
-                        print(f"NaN loss detected at Epoch [{epoch}], Step [{i}]")
-                        nan_flag = True
-                        break
-
-                    # Backward pass and optimize
-                    loss.backward()
-                    optimizer.step()
-
-                    total_train_loss += loss.item()  # Accumulate training loss
-
-                if nan_flag:
-                    break  # Stop training if NaN was encountered
-
-                # Calculate average training loss
-                avg_train_loss = total_train_loss / len(train_seqs)
-
-                # Calculate validation and test losses
-                avg_val_loss = get_loss_value(model, val_seqs, y_val, criterion)
-                avg_test_loss = get_loss_value(model, test_seqs, y_test, criterion)
-
-                if epoch % 20 == 0:
-                    print(f'Test fold {test_fold} \t Epoch [{epoch:3d}] \t Avg Train Loss: {avg_train_loss:.8f} \t Avg Val Loss: {avg_val_loss:.8f} \t Avg Test Loss: {avg_test_loss:.8f}')
-
-                # Early stopping based on validation loss
-                if avg_val_loss < best_val_loss:
-                    best_val_loss = avg_val_loss        # Update best validation loss
-                    best_train_loss = avg_train_loss    # Store best training loss
-                    best_test_loss = avg_test_loss      # Store test loss for best validation
-                    patience_counter = 0                # Reset patience counter
-
-                    # Save best model parameters
-                    best_model_state = model.state_dict()
-                    stop_epoch = epoch + 1              # Record stopping epoch
-                else:
-                    patience_counter += 1               # Increment patience counter
-
-                # Stop training if patience is exceeded
-                if patience_counter > patience:
-                    print(f"Test fold {test_fold} \t Early stopping at Epoch [{epoch}]")
-                    break
-
-            # Record total time taken for this fold
-            fold_duration = time.time() - fold_start_time
-
-            # Save results to CSV
-            report_entry = {
-                'dataset': dataset,
-                'model': model_type,
-                'num_layers': num_layers,
-                'hidden_size': hidden_size,
-                'test_fold': test_fold,
-                'stop_epoch': stop_epoch,
-                'train_loss': best_train_loss,
-                'val_loss': best_val_loss,
-                'test_loss': best_test_loss,
-                'time': fold_duration
-            }
-
-            pd.DataFrame([report_entry]).to_csv(report_path, mode='a', header=False, index=False)  # Append entry to CSV
-
-            print(f"Test fold {test_fold} \t Training completed for GRU layers {num_layers} \t Hidden size {hidden_size} \t Best Val Loss: {best_val_loss:.8f} \t Best Test Loss: {best_test_loss:.8f}")
+# %%
+for config in config_list[30:]:
+    num_layers = config['num_layers']
+    hidden_size = config['hidden_size']
+    test_fold = config['test_fold']
             
-            # Restore best model parameters after training
-            if best_model_state is not None:
-                model.load_state_dict(best_model_state)
-                model.eval()  # Set the model to evaluation mode
+    # Record start time
+    fold_start_time = time.time()
 
-            # Test the model and collect outputs
-            pred_lldas = test_model(model, test_seqs)
+    # Split data into training and test sets based on fold
+    train_ids = folds_df[folds_df['fold'] != test_fold]['sequenceID']
+    test_ids = folds_df[folds_df['fold'] == test_fold]['sequenceID']
 
-            # Save model parameters
-            torch.save(model.state_dict(), f'saved_models/{model_type}_{dataset}_{num_layers}layers_{hidden_size}features_fold{test_fold}.pth')
+    # Prepare train and test sequences as tensors
+    train_seqs = [torch.tensor(seq[1]['signal'].to_numpy(), dtype=torch.float32) for seq in seqs if seq[0] in list(train_ids)]
+    test_seqs = [torch.tensor(seq[1]['signal'].to_numpy(), dtype=torch.float32) for seq in seqs if seq[0] in list(test_ids)]
 
-            # Save predictions to CSV
-            lldas_df = pd.DataFrame(list(zip(test_ids, pred_lldas)), columns=['sequenceID', 'llda'])
-            lldas_df.to_csv(f'predictions/{model_type}_{dataset}_{num_layers}layers_{hidden_size}features_fold{test_fold}.csv', index=False)
+    # Prepare target values for training and testing
+    target_df_train = target_df[target_df['sequenceID'].isin(train_ids)]
+    y_train = torch.tensor(target_df_train.iloc[:, 1:].to_numpy(), dtype=torch.float32)
+    target_df_test = target_df[target_df['sequenceID'].isin(test_ids)]
+    y_test = torch.tensor(target_df_test.iloc[:, 1:].to_numpy(), dtype=torch.float32)
 
+    # Split training data into subtrain and validation sets
+    train_seqs, val_seqs, y_train, y_val = train_test_split(train_seqs, y_train, test_size=0.2, random_state=42)
 
+    # Initialize the GRU model, loss function, and optimizer
+    model = LSTMModel(input_size, hidden_size, num_layers).to(device)    # Move model to device
+    criterion = SquaredHingeLoss().to(device)                           # Move loss function to device
+    optimizer = torch.optim.Adam(model.parameters())
+
+    # Variables for early stopping
+    best_train_loss = float('inf')    # Best training loss initialized to infinity
+    best_val_loss = float('inf')      # Best validation loss initialized to infinity
+    best_test_loss = float('inf')     # Best test loss corresponding to best validation
+    patience_counter = 0              # Early stopping patience counter
+    best_model_state = None           # Store the best model parameters
+    stop_epoch = 0                    # Epoch when training stops
+
+    # Training loop
+    for epoch in range(max_epochs):
+        # Shuffle training sequences and targets
+        combined = list(zip(train_seqs, y_train))
+        random.shuffle(combined)
+        train_seqs, y_train = zip(*combined)
+
+        total_train_loss = 0
+        nan_flag = False  # Flag to detect NaN loss
+
+        # Train on subtrain data
+        model.train()  # Set model to training mode
+        for i, seq_input in enumerate(train_seqs):
+            target = y_train[i].unsqueeze(0).to(device)  # Prepare target and move to device
+
+            optimizer.zero_grad()  # Zero gradients
+
+            # Forward pass
+            seq_input = seq_input.unsqueeze(0).unsqueeze(-1).to(device) # Prepare input and move to device
+            output_seq = model(seq_input)                               # Get model output
+            loss = criterion(output_seq, target.unsqueeze(-1))          # Compute loss
+
+            if torch.isnan(loss).any():  # Check for NaN loss
+                print(f"NaN loss detected at Epoch [{epoch}], Step [{i}]")
+                nan_flag = True
+                break
+
+            # Backward pass and optimize
+            loss.backward()
+            optimizer.step()
+
+            total_train_loss += loss.item()  # Accumulate training loss
+
+        if nan_flag:
+            break  # Stop training if NaN was encountered
+
+        # Calculate average training loss
+        avg_train_loss = total_train_loss / len(train_seqs)
+
+        # Calculate validation and test losses
+        avg_val_loss = get_loss_value(model, val_seqs, y_val, criterion)
+        avg_test_loss = get_loss_value(model, test_seqs, y_test, criterion)
+
+        if epoch % 20 == 0:
+            print(f'Test fold {test_fold} \t Epoch [{epoch:3d}] \t Avg Train Loss: {avg_train_loss:.8f} \t Avg Val Loss: {avg_val_loss:.8f} \t Avg Test Loss: {avg_test_loss:.8f}')
+
+        # Early stopping based on validation loss
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss        # Update best validation loss
+            best_train_loss = avg_train_loss    # Store best training loss
+            best_test_loss = avg_test_loss      # Store test loss for best validation
+            patience_counter = 0                # Reset patience counter
+
+            # Save best model parameters
+            best_model_state = model.state_dict()
+            stop_epoch = epoch + 1              # Record stopping epoch
+        else:
+            patience_counter += 1               # Increment patience counter
+
+        # Stop training if patience is exceeded
+        if patience_counter > patience:
+            print(f"Test fold {test_fold} \t Early stopping at Epoch [{epoch}]")
+            break
+
+    # Record total time taken for this fold
+    fold_duration = time.time() - fold_start_time
+
+    # Save results to CSV
+    report_entry = {
+        'dataset': dataset,
+        'model': model_type,
+        'num_layers': num_layers,
+        'hidden_size': hidden_size,
+        'test_fold': test_fold,
+        'stop_epoch': stop_epoch,
+        'train_loss': best_train_loss,
+        'val_loss': best_val_loss,
+        'test_loss': best_test_loss,
+        'time': fold_duration
+    }
+
+    pd.DataFrame([report_entry]).to_csv(report_path, mode='a', header=False, index=False)  # Append entry to CSV
+
+    print(f"Test fold {test_fold} \t Training completed for GRU layers {num_layers} \t Hidden size {hidden_size} \t Best Val Loss: {best_val_loss:.8f} \t Best Test Loss: {best_test_loss:.8f}")
+    
+    # Restore best model parameters after training
+    if best_model_state is not None:
+        model.load_state_dict(best_model_state)
+        model.eval()  # Set the model to evaluation mode
+
+    # Test the model and collect outputs
+    pred_lldas = test_model(model, test_seqs)
+
+    # Save model parameters
+    torch.save(model.state_dict(), f'saved_models/{model_type}_{dataset}_{num_layers}layers_{hidden_size}features_fold{test_fold}.pth')
+
+    # Save predictions to CSV
+    lldas_df = pd.DataFrame(list(zip(test_ids, pred_lldas)), columns=['sequenceID', 'llda'])
+    lldas_df.to_csv(f'predictions/{model_type}_{dataset}_{num_layers}layers_{hidden_size}features_fold{test_fold}.csv', index=False)
