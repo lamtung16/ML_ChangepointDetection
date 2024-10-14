@@ -1,0 +1,2 @@
+dataset,model,num_layers,hidden_size,test_fold,stop_epoch,train_loss,val_loss,test_loss,time
+systematic,gru,1,2,1,63,0.11982302672156347,0.15991829806409538,0.11030023884702946,94576.64016723633
