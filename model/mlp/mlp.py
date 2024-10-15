@@ -18,7 +18,7 @@ np.random.seed(random_seed)
 random.seed(random_seed)
 
 # %%
-dataset = 'detailed'
+dataset = 'systematic'
 
 # Early stopping parameters
 patience = 100
@@ -84,7 +84,7 @@ configurations = {
         'test_fold': test_fold
     }
     for num_layers in range(1, 5)
-    for layer_size in [2048, 4096]
+    for layer_size in [2,4,8,16,32,64,1024,2048, 4096]
     for test_fold in range(1, 7)
 }
 
@@ -174,9 +174,6 @@ for config in config_list:
     # Restore best model state for final evaluation
     if best_model_state:
         model.load_state_dict(best_model_state)
-    
-    # Save model parameters
-    torch.save(model.state_dict(), f'saved_models/{dataset}_{num_layers}layers_{layer_size}neurons_fold{test_fold}.pth')
     
     # Record end time and calculate elapsed time
     elapsed_time = time.time() - fold_start_time
