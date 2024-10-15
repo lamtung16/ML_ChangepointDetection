@@ -1,4 +1,4 @@
-dataset,model,n_layer,hidden_state_size,test_fold,epochs,train_loss,val_loss,cor_test_loss,time
+dataset,model,num_layers,hidden_size,test_fold,stop_epoch,train_loss,val_loss,test_loss,time
 detailed,gru,1,2,1,350,0.18722334,0.174284,0.16823622,14747.37
 detailed,gru,1,2,2,73,0.30310215,0.23993231,0.34888715,3089.74
 detailed,gru,1,2,3,284,0.24452579,0.26059143,0.26766624,7234.47
