@@ -84,7 +84,7 @@ configurations = {
         'test_fold': test_fold
     }
     for num_layers in range(1, 5)
-    for layer_size in [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    for layer_size in [2048, 4096]
     for test_fold in range(1, 7)
 }
 
