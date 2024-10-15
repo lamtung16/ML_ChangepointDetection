@@ -108,37 +108,33 @@ target_df = pd.read_csv(f'../../training_data/{dataset}/target.csv')
 # %%
 # Prepare CSV file for logging
 report_path = f'report_{dataset}_{model_type}.csv'
-report_header = ['dataset', 'model', 'num_layers', 'hidden_size', 'test_fold', 'stop_epoch', 'train_loss', 'val_loss', 'test_loss', 'time']
+report_header = ['dataset', 'model', 'num_layers', 'hidden_size', 'stop_epoch', 'train_loss', 'val_loss', 'test_loss', 'time']
 if not os.path.exists(report_path):
     pd.DataFrame(columns=report_header).to_csv(report_path, index=False)
 
 # %%
 # Configs
 configurations = {
-    f'num_layers_{num_layers}_hidden_size_{hidden_size}_test_fold_{test_fold}': {
+    f'num_layers_{num_layers}_hidden_size_{hidden_size}': {
         'num_layers': num_layers,
-        'hidden_size': hidden_size,
-        'test_fold': test_fold
+        'hidden_size': hidden_size
     }
     for num_layers in [1, 2]
     for hidden_size in [2, 4, 8, 16]
-    for test_fold in range(1, 7)
 }
 config_list = list(configurations.values())
-config_list[7]
 
 # %%
-for config in config_list[7:]:
+for config in config_list:
     num_layers = config['num_layers']
     hidden_size = config['hidden_size']
-    test_fold = config['test_fold']
             
     # Record start time
     fold_start_time = time.time()
 
     # Split data into training and test sets based on fold
-    train_ids = folds_df[folds_df['fold'] != test_fold]['sequenceID']
-    test_ids = folds_df[folds_df['fold'] == test_fold]['sequenceID']
+    train_ids = folds_df[folds_df['fold'] == "short"]['sequenceID']
+    test_ids = folds_df[folds_df['fold'] == "long"]['sequenceID']
 
     # Prepare train and test sequences as tensors
     train_seqs = [torch.tensor(seq[1]['signal'].to_numpy(), dtype=torch.float32) for seq in seqs if seq[0] in list(train_ids)]
@@ -210,7 +206,7 @@ for config in config_list[7:]:
         avg_test_loss = get_loss_value(model, test_seqs, y_test, criterion)
 
         if epoch % 20 == 0:
-            print(f'Test fold {test_fold} \t Epoch [{epoch:3d}] \t Avg Train Loss: {avg_train_loss:.8f} \t Avg Val Loss: {avg_val_loss:.8f} \t Avg Test Loss: {avg_test_loss:.8f}')
+            print(f'Epoch [{epoch:3d}] \t Avg Train Loss: {avg_train_loss:.8f} \t Avg Val Loss: {avg_val_loss:.8f} \t Avg Test Loss: {avg_test_loss:.8f}')
 
         # Early stopping based on validation loss
         if avg_val_loss < best_val_loss:
@@ -227,7 +223,7 @@ for config in config_list[7:]:
 
         # Stop training if patience is exceeded
         if patience_counter > patience:
-            print(f"Test fold {test_fold} \t Early stopping at Epoch [{epoch}]")
+            print(f"Early stopping at Epoch [{epoch}]")
             break
 
     # Record total time taken for this fold
@@ -239,7 +235,6 @@ for config in config_list[7:]:
         'model': model_type,
         'num_layers': num_layers,
         'hidden_size': hidden_size,
-        'test_fold': test_fold,
         'stop_epoch': stop_epoch,
         'train_loss': best_train_loss,
         'val_loss': best_val_loss,
@@ -249,7 +244,7 @@ for config in config_list[7:]:
 
     pd.DataFrame([report_entry]).to_csv(report_path, mode='a', header=False, index=False)  # Append entry to CSV
 
-    print(f"Test fold {test_fold} \t Training completed for GRU layers {num_layers} \t Hidden size {hidden_size} \t Best Val Loss: {best_val_loss:.8f} \t Best Test Loss: {best_test_loss:.8f}")
+    print(f"Training completed for GRU layers {num_layers} \t Hidden size {hidden_size} \t Best Val Loss: {best_val_loss:.8f} \t Best Test Loss: {best_test_loss:.8f}")
     
     # Restore best model parameters after training
     if best_model_state is not None:
@@ -260,8 +255,8 @@ for config in config_list[7:]:
     pred_lldas = test_model(model, test_seqs)
 
     # Save model parameters
-    torch.save(model.state_dict(), f'saved_models/{model_type}_{dataset}_{num_layers}layers_{hidden_size}features_fold{test_fold}.pth')
+    torch.save(model.state_dict(), f'saved_models/{model_type}_{dataset}_{num_layers}layers_{hidden_size}features.pth')
 
     # Save predictions to CSV
     lldas_df = pd.DataFrame(list(zip(test_ids, pred_lldas)), columns=['sequenceID', 'llda'])
-    lldas_df.to_csv(f'predictions/{model_type}_{dataset}_{num_layers}layers_{hidden_size}features_fold{test_fold}.csv', index=False)
+    lldas_df.to_csv(f'predictions/{model_type}_{dataset}_{num_layers}layers_{hidden_size}features.csv', index=False)
