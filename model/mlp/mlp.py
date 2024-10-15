@@ -22,7 +22,7 @@ dataset = 'detailed'
 
 # Early stopping parameters
 patience = 100
-max_epochs = 1
+max_epochs = 100000
 
 # %%
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -83,8 +83,8 @@ configurations = {
         'layer_size': layer_size,
         'test_fold': test_fold
     }
-    for num_layers in range(1, 4)
-    for layer_size in [2, 4, 8, 16, 32, 64, 128, 256, 512]
+    for num_layers in range(1, 5)
+    for layer_size in [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
     for test_fold in range(1, 7)
 }
 
@@ -121,41 +121,44 @@ for config in config_list:
 
     # Split training data into subtrain and validation sets
     X_subtrain, X_val, y_subtrain, y_val = train_test_split(features_train, target_train, test_size=0.2, random_state=42)
-    y_subtrain = torch.tensor(y_subtrain, dtype=torch.float32)
-    y_val = torch.tensor(y_val, dtype=torch.float32)
-
+    
+    # Move target tensors to the correct device
+    y_subtrain = torch.tensor(y_subtrain, dtype=torch.float32).to(device)
+    y_val = torch.tensor(y_val, dtype=torch.float32).to(device)
+    
     # Initialize the MLP model, loss function, and optimizer
     layer_sizes = [layer_size] * num_layers
     model = MLPModel(X_subtrain.shape[1], layer_sizes).to(device)
     criterion = SquaredHingeLoss().to(device)
     optimizer = torch.optim.Adam(model.parameters())
-
+    
     # Variables for early stopping
     best_val_loss, patience_counter = float('inf'), 0
     best_model_state, stop_epoch = None, 0
-
+    
     # Training loop
     for epoch in range(max_epochs):
         model.train()
         optimizer.zero_grad()
-
-        # Forward pass
-        predictions = model(torch.tensor(X_subtrain, dtype=torch.float32))  # No need to convert to tensor again
+    
+        # Convert training input to tensor and move to device
+        predictions = model(torch.tensor(X_subtrain, dtype=torch.float32).to(device))
         loss = criterion(predictions, y_subtrain)
+    
         loss.backward()
         optimizer.step()
-
+    
         # Evaluation phase
         model.eval()
         with torch.no_grad():
-            val_loss = criterion(model(torch.tensor(X_val, dtype=torch.float32)), y_val)
-            avg_test_loss = criterion(model(torch.tensor(features_test, dtype=torch.float32)), target_test)
-
+            val_loss = criterion(model(torch.tensor(X_val, dtype=torch.float32).to(device)), y_val)
+            avg_test_loss = criterion(model(torch.tensor(features_test, dtype=torch.float32).to(device)), target_test.to(device))  # Ensure target_test is on the same device
+    
         avg_train_loss = loss.item()
-
+    
         if epoch % 1000 == 0:
             print(f'Test fold {test_fold} \t Epoch [{epoch:3d}] \t Avg Train Loss: {avg_train_loss:.8f} \t Avg Val Loss: {val_loss.item():.8f} \t Avg Test Loss: {avg_test_loss.item():.8f}')
-
+    
         # Early stopping check
         if val_loss < best_val_loss:
             best_val_loss, best_model_state = val_loss.item(), model.state_dict()
@@ -163,21 +166,21 @@ for config in config_list:
             stop_epoch = epoch
         else:
             patience_counter += 1
-
+    
         if patience_counter >= patience:
             print(f"Early stopping at Epoch [{epoch}]")
             break
-
+    
     # Restore best model state for final evaluation
     if best_model_state:
         model.load_state_dict(best_model_state)
     
     # Save model parameters
     torch.save(model.state_dict(), f'saved_models/{dataset}_{num_layers}layers_{layer_size}neurons_fold{test_fold}.pth')
-
+    
     # Record end time and calculate elapsed time
     elapsed_time = time.time() - fold_start_time
-
+    
     # Log the results
     report_entry = {
         'dataset': dataset,
@@ -191,11 +194,9 @@ for config in config_list:
         'time': elapsed_time
     }
     pd.DataFrame([report_entry]).to_csv(report_path, mode='a', header=False, index=False)
-
+    
     # Predict on the test set and save to CSV
     model.eval()
-    pred_lldas = model(torch.tensor(features_test, dtype=torch.float32)).detach().numpy().ravel()  # No need to convert to tensor again
+    pred_lldas = model(torch.tensor(features_test, dtype=torch.float32).to(device)).detach().cpu().numpy().ravel()  # Move predictions to CPU for saving
     lldas_df = pd.DataFrame({'sequenceID': features_df[features_df['sequenceID'].isin(test_ids)]['sequenceID'], 'llda': pred_lldas})
     lldas_df.to_csv(f'predictions_all/{dataset}.{num_layers}layers_{layer_size}neurons_{test_fold}.csv', index=False)
-
-
