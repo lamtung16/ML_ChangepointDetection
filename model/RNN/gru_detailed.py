@@ -22,7 +22,7 @@ random.seed(random_seed)
 dataset = 'systematic'
 
 # Model parameters
-model_type = 'rnn'
+model_type = 'gru'
 input_size = 1
 
 # Early stopping parameters
@@ -49,18 +49,18 @@ class SquaredHingeLoss(nn.Module):
         return torch.mean(torch.square(loss))
 
 # %%
-# Define the RNN model
-class RNNModel(nn.Module):
+# Define the GRU model
+class GRUModel(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers):
-        super(RNNModel, self).__init__()
-        self.rnn = nn.RNN(input_size, hidden_size, num_layers, batch_first=True, nonlinearity='relu')    # RNN
+        super(GRUModel, self).__init__()
+        self.gru = nn.GRU(input_size, hidden_size, num_layers, batch_first=True)    # GRU
         self.fc = nn.Linear(hidden_size, 1)                                         # Linear
 
     def forward(self, x):               
-        rnn_out, _ = self.rnn(x)                            # Pass sequence through RNN    
-        last_out = rnn_out[:, -1, :]                        # Take the hidden state of the last time step
+        gru_out, _ = self.gru(x)                            # Pass sequence through GRU    
+        last_out = gru_out[:, -1, :]                        # Take the hidden state of the last time step 
         x = self.fc(last_out)                               # Linear combination         
-        x = torch.relu(x + 10) - torch.relu(x - 10) - 10    # Clamp between -10 and 10
+        x = torch.relu(x + 10) - torch.relu(x - 10) - 10    # clamp between -10 and 10
         return x
 
 # %%
@@ -125,9 +125,10 @@ configurations = {
     for test_fold in range(1, 7)
 }
 config_list = list(configurations.values())
+config_list[7]
 
 # %%
-for config in config_list[10:]:
+for config in config_list[7:]:
     num_layers = config['num_layers']
     hidden_size = config['hidden_size']
     test_fold = config['test_fold']
@@ -153,7 +154,7 @@ for config in config_list[10:]:
     train_seqs, val_seqs, y_train, y_val = train_test_split(train_seqs, y_train, test_size=0.2, random_state=42)
 
     # Initialize the GRU model, loss function, and optimizer
-    model = RNNModel(input_size, hidden_size, num_layers).to(device)    # Move model to device
+    model = GRUModel(input_size, hidden_size, num_layers).to(device)    # Move model to device
     criterion = SquaredHingeLoss().to(device)                           # Move loss function to device
     optimizer = torch.optim.Adam(model.parameters())
 
