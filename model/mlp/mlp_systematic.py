@@ -91,7 +91,7 @@ config_list = list(configurations.values())
 # %%
 # Make sure directories exist
 os.makedirs('saved_models', exist_ok=True)
-os.makedirs('predictions_all', exist_ok=True)
+os.makedirs('predictions', exist_ok=True)
 
 # Iterate over each configuration in the config_list
 for config in config_list:
