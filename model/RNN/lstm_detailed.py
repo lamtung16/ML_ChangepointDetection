@@ -119,7 +119,7 @@ configurations = {
         'num_layers': num_layers,
         'hidden_size': hidden_size
     }
-    for num_layers in [1, 2]
+    for num_layers in [2]
     for hidden_size in [2, 4, 8, 16]
 }
 config_list = list(configurations.values())
