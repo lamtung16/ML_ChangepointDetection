@@ -31,3 +31,5 @@ mlp_chosen_fewer_features.6,1,95.47581903276132
 mlp_chosen_fewer_features.6,2,88.61454046639233
 linear_piecewise_2_regions.4,1,96.8798751950078
 linear_piecewise_2_regions.4,2,91.22085048010973
+mlp,1,93.13572542901716
+mlp,2,95.74759945130316
