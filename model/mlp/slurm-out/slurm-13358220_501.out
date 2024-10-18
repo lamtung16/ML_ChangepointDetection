@@ -1,0 +1,2 @@
+using cpu
+{'dataset': 'cancer', 'num_layers': 4, 'layer_size': 2048, 'test_fold': 1, 'test_ratio': 0.2, 'stop_epoch': 15, 'train_loss': 0.48630547523498535, 'val_loss': 1.2853907346725464, 'test_loss': 1.66427481174469, 'time': 80.34416651725769}

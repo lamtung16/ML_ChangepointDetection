@@ -1,4 +1,0 @@
-  File "/home/tln229/ML_ChangepointDetection/model/mlp/run_one.py", line 176
-    'stop_epoch': stop_epoch,
-    ^^^^^^^^^^^^
-SyntaxError: invalid syntax
