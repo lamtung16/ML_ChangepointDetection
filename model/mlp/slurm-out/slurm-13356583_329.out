@@ -1,3 +1,0 @@
-using cpu
-Test fold 2 	 Epoch [  0] 	 Avg Train Loss: 2.29529667 	 Avg Val Loss: 2.14596176 	 Avg Test Loss: 2.28562951
-Early stopping at Epoch [217]

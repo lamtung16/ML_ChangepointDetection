@@ -81,7 +81,7 @@ target_df = pd.read_csv(f'../../training_data/{dataset}/target.csv')
 features_df = pd.read_csv(f'../../training_data/{dataset}/features.csv')
 
 # Prepare CSV file for logging
-report_path = f'report_{dataset}.csv'
+report_path = f'reports/{dataset}/report_{param_row}.csv'
 report_header = ['dataset', 'num_layers', 'layer_size', 'test_fold', 'stop_epoch', 'train_loss', 'val_loss', 'test_loss', 'time']
 if not os.path.exists(report_path):
     pd.DataFrame(columns=report_header).to_csv(report_path, index=False)
@@ -148,9 +148,6 @@ for epoch in range(max_epochs):
 
     avg_train_loss = loss.item()
 
-    if epoch % 1000 == 0:
-        print(f'Test fold {test_fold} \t Epoch [{epoch:3d}] \t Avg Train Loss: {avg_train_loss:.8f} \t Avg Val Loss: {val_loss.item():.8f} \t Avg Test Loss: {avg_test_loss.item():.8f}')
-
     # Early stopping check
     if val_loss < best_val_loss:
         best_val_loss, best_model_state = val_loss.item(), model.state_dict()
@@ -160,7 +157,6 @@ for epoch in range(max_epochs):
         patience_counter += 1
 
     if patience_counter >= patience:
-        print(f"Early stopping at Epoch [{epoch}]")
         break
 
 # Restore best model state for final evaluation
@@ -176,6 +172,7 @@ report_entry = {
     'num_layers': num_layers,
     'layer_size': layer_size,
     'test_fold': test_fold,
+    'test_ratio': test_ratio,
     'stop_epoch': stop_epoch,
     'train_loss': avg_train_loss,
     'val_loss': best_val_loss,
@@ -183,6 +180,7 @@ report_entry = {
     'time': elapsed_time
 }
 pd.DataFrame([report_entry]).to_csv(report_path, mode='a', header=False, index=False)
+print(report_entry)
 
 # Predict on the test set and save to CSV
 model.eval()

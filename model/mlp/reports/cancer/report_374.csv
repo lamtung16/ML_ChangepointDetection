@@ -1,0 +1,2 @@
+dataset,num_layers,layer_size,test_fold,stop_epoch,train_loss,val_loss,test_loss,time
+cancer,3,2048,1,0.5,13,0.45983007550239563,1.189594030380249,1.4845143556594849,49.85249066352844
