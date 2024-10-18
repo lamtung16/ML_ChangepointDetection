@@ -82,7 +82,7 @@ features_df = pd.read_csv(f'../../training_data/{dataset}/features.csv')
 
 # Prepare CSV file for logging
 report_path = f'reports/{dataset}/report_{param_row}.csv'
-report_header = ['dataset', 'num_layers', 'layer_size', 'test_fold', 'stop_epoch', 'train_loss', 'val_loss', 'test_loss', 'time']
+report_header = ['dataset', 'num_layers', 'layer_size', 'test_fold', 'test_ratio', 'stop_epoch', 'train_loss', 'val_loss', 'test_loss', 'time']
 if not os.path.exists(report_path):
     pd.DataFrame(columns=report_header).to_csv(report_path, index=False)
 
