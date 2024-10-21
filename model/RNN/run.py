@@ -2,7 +2,7 @@ import multiprocessing
 import subprocess
 
 # List of your Python scripts
-scripts = ["gru_systematic.py", "lstm_detailed.py", "lstm_systematic.py", "rnn_detailed.py", "rnn_systematic.py"]
+scripts = ["gru_cancer.py", "lstm_cancer.py"]
 
 # Function to run each script
 def run_script(script):
