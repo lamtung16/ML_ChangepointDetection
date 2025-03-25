@@ -20,8 +20,12 @@ def get_err(evaluation_df, seqID, llda):
     # get total labels and total errors
     n_labels = row['labels'].item()
     n_errs = row['errors'].item()
+    fp = row['fp'].item()
+    fn = row['fn'].item()
+    tp = row['possible.fp'].item() - fp
+    tn = row['possible.fn'].item() - fn
 
-    return n_labels, n_errs
+    return n_labels, n_errs, fp, fn, tp, tn
 
 
 
@@ -44,11 +48,56 @@ def get_acc(eval_df, lldas_df):
     total_labels = 0
     for seqID in lldas_df['sequenceID']:
         llda = lldas_df[lldas_df['sequenceID'] == seqID]['llda'].item()
-        n_labels, n_errs = get_err(eval_df, seqID, llda)
+        n_labels, n_errs, _, _, _, _ = get_err(eval_df, seqID, llda)
         total_labels += n_labels
         total_err += n_errs
     acc = (total_labels - total_err)/total_labels
     return acc*100
+
+
+
+# get F1-score from eval_df and lldas_df
+def get_f1_score(eval_df, lldas_df):
+    total_tp = 0
+    total_fp = 0
+    total_fn = 0
+    total_labels = 0
+    
+    for seqID in lldas_df['sequenceID']:
+        try:
+            # Try to get the 'llda' value for the current seqID
+            llda = lldas_df[lldas_df['sequenceID'] == seqID]['llda'].item()
+        except ValueError:
+            # Handle the case where the 'llda' value is not found
+            print(f"Warning: No 'llda' value found for sequenceID: {seqID}. Skipping this seqID.")
+            continue
+        
+        try:
+            # Try to unpack the values returned by get_err
+            n_labels, n_errs, fp, fn, tp, tn = get_err(eval_df, seqID, llda)
+        except Exception as e:
+            # Handle any error that may occur during the get_err call
+            print(f"Error while processing sequenceID {seqID} with llda {llda}: {e}")
+            continue
+        
+        total_labels += n_labels
+        total_fp += fp
+        total_fn += fn
+        total_tp += tp
+
+    # Calculate Precision and Recall
+    precision = total_tp / (total_tp + total_fp) if (total_tp + total_fp) > 0 else 0
+    recall = total_tp / (total_tp + total_fn) if (total_tp + total_fn) > 0 else 0
+    
+    # Calculate F1-score
+    if precision + recall > 0:
+        f1_score = (2 * precision * recall) / (precision + recall)
+    else:
+        f1_score = 0
+
+    return f1_score * 100
+
+
 
 
 
