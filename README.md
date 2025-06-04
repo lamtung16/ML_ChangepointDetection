@@ -13,10 +13,10 @@ Pseudo code (last changepoint algorithm):
     - $C_0 = -\lambda$
     - for $t:1 \rightarrow N$:
         - $C_t = \min_{\tau \in \{0, 1, \dots, t-1\}} C_\tau + \lambda + L(x, \tau + 1, t)$
-        - $\tau^*_t = \argmin_{\tau \in \{0, 1, \dots, t-1\}} C_\tau + \lambda + L(x, \tau + 1, t)$
-    - getting last change point vector $\tau^* = [0, \tau^*_2, \tau^*_3, \dots, \tau^*_N]$
+        - $\tau_t^* = argmin_{\tau \in \{0, 1, \dots, t-1\}} C_\tau + \lambda + L(x, \tau + 1, t)$
+    - getting last change point vector $\tau^*$
 - output:
-    - from vector $\tau^*$, traceback from $\tau^*_N$ to get the set of changepoint
+    - from vector $\tau^*$, traceback to get the set of changepoint
 
 ### Labled Optimal Partitioning (LOPART)
 Similar to OPART, there is only one difference: inside the for loop, instead of consider $\tau \in \{0, 1, \dots, t-1\}$, we consider $\tau \in T$ which satisfy the number of changepoints from all of the train labels.
