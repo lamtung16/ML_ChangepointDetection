@@ -1,6 +1,8 @@
 # Changepoint detection
 ## Publication
-[Deep Learning Approach for Changepoint Detection: Penalty Parameter Optimization](https://arxiv.org/abs/2408.00856)
+[Arxiv version](https://arxiv.org/abs/2408.00856)
+
+[Original Paper in Statistics and Computing](https://rdcu.be/exqb1)
 ## Changepoint Detection Dynamic Algorithms
 ### Optimal Partitioning (OPART)
 To implement the algorithm, we need to know the definition of this loss function:
